@@ -8,6 +8,8 @@ import Admin from "./components/Admin/Admin";
 import User from "./components/User/User";
 import ErrorPage from "./components/Error/ErrorPage";
 import HomePage from "./components/Home/HomePage";
+import ManageUser from "./components/Admin/Content/ManageUser";
+import Dashboard from "./components/Admin/Content/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +23,7 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "/user",
+        path: "user",
         element: <User />,
       },
     ],
@@ -29,6 +31,16 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: <Admin />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: "manage-user",
+        element: <ManageUser />,
+      },
+    ],
   },
 ]);
 

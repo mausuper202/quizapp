@@ -12,6 +12,7 @@ import { FaGem, FaGithub } from "react-icons/fa";
 import { MdQuiz, MdDashboard } from "react-icons/md";
 import sidebarBg from "../../assets/images/bg2.jpg";
 import "./SideBar.scss";
+import { Link } from "react-router-dom";
 const SideBar = ({ image, collapsed, toggled, handleToggleSidebar }) => {
   return (
     <>
@@ -42,11 +43,17 @@ const SideBar = ({ image, collapsed, toggled, handleToggleSidebar }) => {
 
         <SidebarContent>
           <Menu iconShape="circle">
-            <MenuItem icon={<MdDashboard />}>Dashboard</MenuItem>
+            <MenuItem icon={<MdDashboard />}>
+              Dashboard
+              <Link to={"/admin"} />
+            </MenuItem>
           </Menu>
           <Menu iconShape="circle">
             <SubMenu icon={<FaGem />} title={"Features"}>
-              <MenuItem> Manage Users</MenuItem>
+              <MenuItem>
+                Manage Users
+                <Link to={"/admin/manage-user"} />
+              </MenuItem>
               <MenuItem> Manage Quiz</MenuItem>
               <MenuItem> Manage Question</MenuItem>
             </SubMenu>
