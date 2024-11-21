@@ -2,11 +2,20 @@ import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Layout from "./Layout";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+
+// 1. khai báo dispatch + actions => react component
+// 2. Khai báo reducer + logic => reducer
+// 3. Sử dụng state của Redux
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
-  <Layout />
+  <Provider store={store}>
+    <Layout />
+  </Provider>
+
   // </React.StrictMode>
 );
 
