@@ -5,12 +5,14 @@ import { postLogin } from "../../services/apiService";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { doLogin } from "../../redux/action/userAction";
+import { ImSpinner9 } from "react-icons/im";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = () => {
     navigate("/register");
@@ -37,6 +39,7 @@ const Login = (props) => {
       toast.error("Invalid password");
       return;
     }
+    setIsLoading(true);
 
     //submit data
     let data = await postLogin(email, password);
@@ -44,11 +47,13 @@ const Login = (props) => {
     if (data && data.EC === 0) {
       dispatch(doLogin(data));
       toast.success(data.EM);
+      setIsLoading(false);
       navigate("/");
     }
 
     if (data && data.EC !== 0) {
       toast.error(data.EM);
+      setIsLoading(false);
     }
   };
   return (
@@ -79,8 +84,13 @@ const Login = (props) => {
           </div>
           <span className="forgot-password">Forgot password ?</span>
           <div>
-            <button className="btn-submit" onClick={() => handleLogin()}>
-              Login to QUIZ
+            <button
+              className="btn-submit"
+              onClick={() => handleLogin()}
+              disabled={isLoading}
+            >
+              {isLoading === true && <ImSpinner9 className="loader-icon" />}
+              <span>Login to QUIZ</span>
             </button>
             <div className="text-center">
               <span

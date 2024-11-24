@@ -3,7 +3,9 @@ import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Layout from "./Layout";
 import { Provider } from "react-redux";
-import store from "./redux/store";
+import { store, persistor } from "./redux/store";
+import "nprogress/nprogress.css";
+import { PersistGate } from "redux-persist/integration/react";
 
 // 1. khai báo dispatch + actions => react component
 // 2. Khai báo reducer + logic => reducer
@@ -13,7 +15,9 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
   <Provider store={store}>
-    <Layout />
+    <PersistGate loading={null} persistor={persistor}>
+      <Layout />
+    </PersistGate>
   </Provider>
 
   // </React.StrictMode>
