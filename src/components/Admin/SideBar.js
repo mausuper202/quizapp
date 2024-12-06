@@ -12,8 +12,10 @@ import { FaGem, FaGithub } from "react-icons/fa";
 import { MdQuiz, MdDashboard } from "react-icons/md";
 import sidebarBg from "../../assets/images/bg2.jpg";
 import "./SideBar.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 const SideBar = ({ image, collapsed, toggled, handleToggleSidebar }) => {
+  const navigate = useNavigate();
   return (
     <>
       <ProSidebar
@@ -37,7 +39,7 @@ const SideBar = ({ image, collapsed, toggled, handleToggleSidebar }) => {
             }}
           >
             <MdQuiz size={"3em"} color={"00bfff"} />
-            <span>Quiz</span>
+            <span onClick={() => navigate("/")}>Quiz</span>
           </div>
         </SidebarHeader>
 
@@ -54,8 +56,15 @@ const SideBar = ({ image, collapsed, toggled, handleToggleSidebar }) => {
                 Manage Users
                 <Link to={"/admin/manage-user"} />
               </MenuItem>
-              <MenuItem> Manage Quiz</MenuItem>
-              <MenuItem> Manage Question</MenuItem>
+              <MenuItem>
+                Manage Quiz
+                <Link to={"/admin/manage-quizzes"} />
+              </MenuItem>
+              <MenuItem>
+                {" "}
+                Manage Question
+                <Link to={"/admin/manage-questions"} />
+              </MenuItem>
             </SubMenu>
           </Menu>
         </SidebarContent>

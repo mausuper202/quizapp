@@ -13,6 +13,9 @@ import { ToastContainer, toast } from "react-toastify";
 import Register from "./components/Auth/Register";
 import ListQuiz from "./components/User/ListQuiz";
 import DetailQuiz from "./components/User/DetailQuiz";
+import ManageQuiz from "./components/Admin/Content/Quiz/ManageQuiz";
+import ManageQuestions from "./components/Admin/Content/Question/ManageQuestions";
+import PrivateRoute from "./routes/PrivateRoute";
 
 const route = createBrowserRouter([
   {
@@ -27,7 +30,11 @@ const route = createBrowserRouter([
 
       {
         path: "user",
-        element: <ListQuiz />,
+        element: (
+          <PrivateRoute>
+            <ListQuiz />
+          </PrivateRoute>
+        ),
       },
     ],
   },
@@ -37,7 +44,11 @@ const route = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <Admin />,
+    element: (
+      <PrivateRoute>
+        <Admin />
+      </PrivateRoute>
+    ),
     children: [
       {
         index: true,
@@ -46,6 +57,14 @@ const route = createBrowserRouter([
       {
         path: "manage-user",
         element: <ManageUser />,
+      },
+      {
+        path: "manage-quizzes",
+        element: <ManageQuiz />,
+      },
+      {
+        path: "manage-questions",
+        element: <ManageQuestions />,
       },
     ],
   },

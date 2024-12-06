@@ -6,7 +6,8 @@ import { Provider } from "react-redux";
 import { store, persistor } from "./redux/store";
 import "nprogress/nprogress.css";
 import { PersistGate } from "redux-persist/integration/react";
-
+import "react-perfect-scrollbar/dist/css/styles.css";
+import "react-awesome-lightbox/build/style.css";
 // 1. khai báo dispatch + actions => react component
 // 2. Khai báo reducer + logic => reducer
 // 3. Sử dụng state của Redux

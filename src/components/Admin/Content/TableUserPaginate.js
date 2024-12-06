@@ -3,6 +3,7 @@ import ReactPaginate from "react-paginate";
 
 const TableUserPaginate = (props) => {
   const { listUsers, pageCount } = props;
+
   const handlePageClick = (event) => {
     props.fetchListUsersWithPaginate(+event.selected + 1);
     props.setCurrentPage(+event.selected + 1);

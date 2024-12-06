@@ -1,15 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { getDataQuiz } from "../../services/apiService";
+import { getDataQuiz, postSubmitQuiz } from "../../services/apiService";
 import _ from "lodash";
 import "./DetailQuiz.scss";
+import Question from "./Question";
+import ModalResult from "./ModalResult";
+import RightContent from "./Content/RightContent";
 
 const DetailQuiz = () => {
   const params = useParams();
   const quizId = params.id;
   const location = useLocation();
+  const [index, setIndex] = useState(0);
 
-  console.log(location);
+  const [dataQuiz, setDataQuiz] = useState([]);
+
+  const [isShowModalResult, setIsShowModalResult] = useState(false);
+  const [dataModalResult, setDataModalResult] = useState({});
 
   useEffect(() => {
     fetchQuestions();
@@ -17,7 +24,6 @@ const DetailQuiz = () => {
 
   const fetchQuestions = async () => {
     let res = await getDataQuiz(quizId);
-    console.log(">>> check res: ", res);
     if (res && res.EC === 0) {
       let raw = res.DT;
       let data = _.chain(raw)
@@ -31,14 +37,90 @@ const DetailQuiz = () => {
           value.forEach((item, index) => {
             if (index === 0) {
               questionDescription = item.description;
-              image = image;
+              image = item.image;
             }
+            item.answers.isSelected = false;
             answers.push(item.answers);
           });
           return { questionId: key, answers, questionDescription, image };
         })
         .value();
-      console.log(">> check data: ", data);
+      setDataQuiz(data);
+    }
+  };
+
+  const handleCheckbox = (answerId, questionId) => {
+    let dataQuizClone = _.cloneDeep(dataQuiz);
+    let question = dataQuizClone.find(
+      (item) => +item.questionId === +questionId
+    );
+    if (question && question.answers) {
+      question.answers = question.answers.map((item) => {
+        if (+item.id === +answerId) {
+          item.isSelected = !item.isSelected;
+        }
+        return item;
+      });
+    }
+    let index = dataQuizClone.findIndex(
+      (item) => +item.questionId === +questionId
+    );
+    if (index > -1) {
+      dataQuizClone[index] = question;
+      setDataQuiz(dataQuizClone);
+    }
+  };
+
+  const handlePrev = () => {
+    if (index - 1 < 0) return;
+
+    setIndex(index - 1);
+  };
+
+  const handleNext = () => {
+    if (dataQuiz && dataQuiz.length > index + 1) setIndex(index + 1);
+  };
+
+  const handleFinishQuiz = async () => {
+    console.log(">>> check data before submit: ", dataQuiz);
+
+    let payload = {
+      quizId: +quizId,
+      answers: [],
+    };
+
+    let answers = [];
+    if (dataQuiz && dataQuiz.length > 0) {
+      dataQuiz.forEach((question) => {
+        let questionId = +question.questionId;
+        let userAnswerId = [];
+        // todo: userAnswrId
+        question.answers.forEach((a) => {
+          if (a.isSelected === true) {
+            userAnswerId.push(a.id);
+          }
+        });
+        answers.push({
+          questionId: questionId,
+          userAnswerId: userAnswerId,
+        });
+      });
+
+      payload.answers = answers;
+
+      //submit api
+      let res = await postSubmitQuiz(payload);
+      console.log(">>> check res:  ", res);
+      if (res && res.EC === 0) {
+        setDataModalResult({
+          countCorrect: res.DT.countCorrect,
+          countTotal: res.DT.countTotal,
+          quizData: res.DT.quizData,
+        });
+        setIsShowModalResult(true);
+      } else {
+        alert("something wrong....");
+      }
     }
   };
 
@@ -53,19 +135,39 @@ const DetailQuiz = () => {
           <img />
         </div>
         <div className="q-content">
-          <div className="question">Question 1: how are you?</div>
-          <div className="answer">
-            <div className="a-child">A. dalkfjadlk</div>
-            <div className="a-child">B. dalkfjadlk</div>
-            <div className="a-child">C. dalkfjadlk</div>
-          </div>
+          <Question
+            index={index}
+            data={dataQuiz && dataQuiz.length > 0 ? dataQuiz[index] : []}
+            handleCheckbox={handleCheckbox}
+          />
         </div>
         <div className="footer">
-          <button className="btn btn-secondary">Previous</button>
-          <button className="btn btn-primary">Next</button>
+          <button className="btn btn-secondary" onClick={() => handlePrev()}>
+            Previous
+          </button>
+          <button className="btn btn-primary" onClick={() => handleNext()}>
+            Next
+          </button>
+          <button
+            className="btn btn-warning"
+            onClick={() => handleFinishQuiz()}
+          >
+            Finish
+          </button>
         </div>
       </div>
-      <div className="right-content">count down</div>
+      <div className="right-content">
+        <RightContent
+          dataQuiz={dataQuiz}
+          handleFinishQuiz={handleFinishQuiz}
+          setIndex={setIndex}
+        />
+      </div>
+      <ModalResult
+        show={isShowModalResult}
+        setShow={setIsShowModalResult}
+        dataModalResult={dataModalResult}
+      />
     </div>
   );
 };
